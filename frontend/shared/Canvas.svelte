@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount, onDestroy, createEventDispatcher } from "svelte";
-	import { BoundingBox, Hand, Trash } from "./icons/index";
+	import { BoundingBox, Hand, Trash, Line } from "./icons/index";
 	import ModalBox from "./ModalBox.svelte";
 	import Box from "./Box";
 	import { Colors } from './Colors.js';
 	import AnnotatedImageData from "./AnnotatedImageData";
 
-	enum Mode {creation, drag}
+	enum Mode {creation, drag, creationLine}
 
     export let imageUrl: string | null = null;
 	export let interactive: boolean;
@@ -105,7 +105,9 @@
 		}
 
 		if (mode === Mode.creation) {
-			createBox(event);
+			createBox(event, false);
+		} else if (mode === Mode.creationLine) {
+			createBox(event, true);
 		} else if (mode === Mode.drag) {
 			clickBox(event);
 		}
@@ -180,7 +182,7 @@
 		}
 	}
 
-	function createBox(event: PointerEvent) {
+	function createBox(event: PointerEvent, isLine: boolean) {
 		const rect = canvas.getBoundingClientRect();
 		const x = (event.clientX - rect.left - canvasXmin) / scaleFactor;
 		const y = (event.clientY - rect.top - canvasYmin) / scaleFactor;
@@ -204,11 +206,14 @@
 			canvasYmin,
 			canvasXmax,
 			canvasYmax,
+			isLine,
+			"",
 			"",
 			x,
 			y,
 			x,
 			y,
+			[],
 			color,
 			boxAlpha,
 			boxMinSize,
@@ -229,6 +234,11 @@
 
 	function setCreateMode() {
 		mode = Mode.creation;
+		canvas.style.cursor = "crosshair";
+	}
+
+	function setCreateLineMode() {
+		mode = Mode.creationLine;
 		canvas.style.cursor = "crosshair";
 	}
 
@@ -269,6 +279,7 @@
 	function onModalEditChange(event) {
 		editModalVisible = false;
 		const { detail } = event;
+		let name = detail.name;
 		let label = detail.label;
 		let color = detail.color;
 		let ret = detail.ret;
@@ -276,6 +287,7 @@
 			let box = value.boxes[selectedBox];
 			if (ret == 1) {
 				box.label = label;
+				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
 				dispatch("change");
@@ -288,6 +300,7 @@
 	function onModalNewChange(event) {
 		newModalVisible = false;
 		const { detail } = event;
+		let name = detail.name;
 		let label = detail.label;
 		let color = detail.color;
 		let ret = detail.ret;
@@ -295,6 +308,7 @@
 			let box = value.boxes[selectedBox];
 			if (ret == 1) {
 				box.label = label;
+				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
 				dispatch("change");
@@ -367,6 +381,7 @@
 			if (!(box instanceof Box)) {
 				let color = "";
 				let label = "";
+				let name = "";
 				if (box.hasOwnProperty("color")) {
 					color = box["color"];
 					if (Array.isArray(color) && color.length === 3) {
@@ -378,6 +393,15 @@
 				if (box.hasOwnProperty("label")) {
 					label = box["label"];
 				}
+				if (box.hasOwnProperty("name")) {
+					name = box["name"];
+				}
+				const isLine = box['isLine'] || false;
+				let pathPoints = [];
+				if (box.hasOwnProperty("points")) {
+					pathPoints = box.points;
+				}
+
 				box = new Box(
 					draw,
 					onBoxFinishCreation,
@@ -385,11 +409,14 @@
 					canvasYmin,
 					canvasXmax,
 					canvasYmax,
+					isLine,
+					name,
 					label,
 					box["xmin"],
 					box["ymin"],
 					box["xmax"],
 					box["ymax"],
+					pathPoints,
 					color,
 					boxAlpha,
 					boxMinSize,
@@ -479,6 +506,12 @@
 	<span class="canvas-control">
 		<button
 			class="icon"
+			class:selected={mode === Mode.creationLine}
+			aria-label="Create line"
+			on:click={() => setCreateLineMode()}><Line/></button
+		>
+		<button
+			class="icon"
 			class:selected={mode === Mode.creation}
 			aria-label="Create box"
 			on:click={() => setCreateMode()}><BoundingBox/></button
@@ -505,6 +538,7 @@
 		on:enter{onModalEditChange}
 		choices={choices}
 		choicesColors={choicesColors}
+		name={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].name : ""}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
 	/>

@@ -26,18 +26,19 @@
   },
   "dependencies": {
     "@gradio/atoms": "0.13.3",
+    "@gradio/button": "^0.2.24",
     "@gradio/client": "1.12.0",
+    "@gradio/colorpicker": "^0.2.11",
     "@gradio/icons": "0.10.0",
-    "@gradio/statustracker": "0.10.4",
-    "@gradio/upload": "0.15.2",
     "@gradio/image": "0.11.9",
+    "@gradio/statustracker": "0.10.4",
+    "@gradio/textbox": "^0.10.11",
+    "@gradio/upload": "0.15.2",
     "@gradio/utils": "0.10.1",
     "@gradio/wasm": "0.17.3",
     "cropperjs": "^1.5.12",
     "lazy-brush": "^1.0.1",
-    "resize-observer-polyfill": "^1.5.1",
-    "@gradio/colorpicker": "^0.2.11",
-    "@gradio/button": "^0.2.24"
+    "resize-observer-polyfill": "^1.5.1"
   },
   "repository": {
     "type": "git",

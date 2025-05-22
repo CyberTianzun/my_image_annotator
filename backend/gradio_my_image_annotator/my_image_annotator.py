@@ -246,6 +246,8 @@ class my_image_annotator(Component):
         parsed_boxes = []
         for box in boxes:
             new_box = {}
+            new_box["isLine"] = box.get("isLine", False)
+            new_box["name"] = box.get("name", "")
             new_box["label"] = box.get("label", "")
             new_box["color"] = (0,0,0)
             if "color" in box:
@@ -257,6 +259,8 @@ class my_image_annotator(Component):
             new_box["ymin"] = round(box["ymin"] / scale_factor)
             new_box["xmax"] = round(box["xmax"] / scale_factor)
             new_box["ymax"] = round(box["ymax"] / scale_factor)
+            new_box["points"] = box.get("points", [])
+            new_box["scale_factor"] = scale_factor
             parsed_boxes.append(new_box)
         return parsed_boxes
 
@@ -295,14 +299,14 @@ class my_image_annotator(Component):
             if not isinstance(value["boxes"], (list, tuple)):
                 raise ValueError(f"'boxes' must be a list of dicts. Got "
                                  f"{type(value['boxes'])}")
-            for box in value["boxes"]:
-                if (not isinstance(box, dict)
-                    or not set(box.keys()).issubset({"label", "xmin", "ymin", "xmax", "ymax", "color"})
-                    or not set(box.keys()).issuperset({"xmin", "ymin", "xmax", "ymax"})
-                    ):
-                    raise ValueError("Box must be a dict with the following "
-                                     "keys: 'xmin', 'ymin', 'xmax', 'ymax', "
-                                     f"['label', 'color']'. Got {box}")
+            # for box in value["boxes"]:
+            #     if (not isinstance(box, dict)
+            #         or not set(box.keys()).issubset({"name", "label", "xmin", "ymin", "xmax", "ymax", "color"})
+            #         or not set(box.keys()).issuperset({"xmin", "ymin", "xmax", "ymax"})
+            #         ):
+            #         raise ValueError("Box must be a dict with the following "
+            #                          "keys: 'xmin', 'ymin', 'xmax', 'ymax', "
+            #                          f"['label', 'color']'. Got {box}")
 
         # Check and parse image
         image = value.setdefault("image", None)

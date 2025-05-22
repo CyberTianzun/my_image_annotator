@@ -2,10 +2,13 @@
 	import { BaseColorPicker } from "@gradio/colorpicker";
     import { BaseButton } from "@gradio/button";
     import { BaseDropdown } from "./patched_dropdown/Index.svelte";
+    import { BaseTextbox } from "@gradio/textbox";
 	import { createEventDispatcher } from "svelte";
     import { onMount, onDestroy } from "svelte";
 
+    export let name = "";
     export let label = "";
+    export let currentName = "";
     export let currentLabel = "";
     export let choices = [];  // [(label, i)]
     export let choicesColors = [];
@@ -21,8 +24,15 @@
         dispatch("change", {
             label: currentLabel,
             color: currentColor,
+            name: currentName,
             ret: ret // -1: remove, 0: cancel, 1: change
         });
+    }
+
+    function onTextboxChange(event) {
+        const { detail } = event;
+		let choice = detail;
+        currentName = choice;
     }
 
     function onDropDownChange(event) {
@@ -62,6 +72,7 @@
 	onMount(() => {
 		document.addEventListener("keydown", handleKeyPress);
         currentLabel = label;
+        currentName = name;
         currentColor = color;
 	});
     
@@ -75,11 +86,19 @@
     <div class="modal-container">
         <span class="model-content">
             <div style="margin-right: 10px;">
+                <BaseTextbox
+                    value={name}
+                    label="Name"
+                    show_label={true}
+                    on:change={onTextboxChange}
+                />
+            </div>
+            <div style="margin-right: 10px;">
                 <BaseDropdown
                     value={currentLabel}
                     label="Label"
                     {choices}
-                    show_label={false}
+                    show_label={true}
                     allow_custom_value={true}
                     on:change={onDropDownChange}
                     on:enter={onDropDownEnter}

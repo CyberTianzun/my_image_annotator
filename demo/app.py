@@ -20,7 +20,18 @@ example_annotation = {
             "ymax": 702,
             "label": "Person",
             "color": (0, 255, 0)
-        }
+        },
+        {
+            "xmin": 405,
+            "ymin": 62,
+            "xmax": 1056,
+            "ymax": 413,
+            "label": "Person",
+            "color": (0, 0, 255),
+            "name": "xxx",
+            "isLine": True,
+            "points": [[405,412], [999,212]],
+        },
     ]
 }
 

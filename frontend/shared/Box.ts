@@ -15,6 +15,7 @@ function setAlpha(rgbColor: string, alpha: number) {
 
 
 export default class Box {
+    name: string;
     label: string;
     xmin: number;
     ymin: number;
@@ -22,6 +23,8 @@ export default class Box {
     ymax: number;
     color: string;
     alpha: number;
+    pathPoints: Array<[number, number]>;
+    isLine: boolean;
     isDragging: boolean;
     isResizing: boolean;
     isSelected: boolean;
@@ -57,11 +60,14 @@ export default class Box {
         canvasYmin: number,
         canvasXmax: number,
         canvasYmax: number,
+        isLine: boolean,
+        name: string,
         label: string,
         xmin: number,
         ymin: number,
         xmax: number,
         ymax: number,
+        pathPoints: Array<[number, number]>,
         color: string = "rgb(255, 255, 255)",
         alpha: number = 0.5,
         minSize: number = 25,
@@ -77,6 +83,7 @@ export default class Box {
         this.canvasXmax = canvasXmax;
         this.canvasYmax = canvasYmax;
         this.scaleFactor = scaleFactor;
+        this.name = name;
         this.label = label;
         this.isDragging = false;
         this.isCreating = false;
@@ -84,6 +91,7 @@ export default class Box {
         this.ymin = ymin;
         this.xmax = xmax;
         this.ymax = ymax;
+        this.pathPoints = pathPoints;
         this.isResizing = false;
         this.isSelected = false;
         this.offsetMouseX = 0;
@@ -98,10 +106,27 @@ export default class Box {
         this.alpha = alpha;
         this.creatingAnchorX = "xmin";
         this.creatingAnchorY = "ymin";
+        this.isLine = isLine;
     }
 
     toJSON() {
+        if (this.isLine) {
+            return {
+                name: this.name,
+                label: this.label,
+                points: this.pathPoints,
+                color: this.color,
+                scaleFactor: this.scaleFactor,
+                isLine: this.isLine,
+
+                xmin: this.xmin,
+                ymin: this.ymin,
+                xmax: this.xmax,
+                ymax: this.ymax,
+            };
+        }
         return {
+            name: this.name,
             label: this.label,
             xmin: this.xmin,
             ymin: this.ymin,
@@ -109,6 +134,7 @@ export default class Box {
             ymax: this.ymax,
             color: this.color,
             scaleFactor: this.scaleFactor,
+            isLine: this.isLine,
         };
     }
 
@@ -229,38 +255,57 @@ export default class Box {
         ctx.beginPath();
         [xmin, ymin] = this.toCanvasCoordinates(this.xmin, this.ymin);
         ctx.rect(xmin, ymin, this.getWidth(), this.getHeight());
-        ctx.fillStyle = setAlpha(this.color, this.alpha);
-        ctx.fill();
+        if (!this.isLine) {
+            ctx.fillStyle = setAlpha(this.color, this.alpha);
+            ctx.fill();
+        }
         if (this.isSelected) {
             ctx.lineWidth = this.selectedThickness;
         } else {
             ctx.lineWidth = this.thickness;
         }
-        ctx.strokeStyle = setAlpha(this.color, 1);
+        ctx.strokeStyle = setAlpha(this.color, 0.5);
+
         
         ctx.stroke();
         ctx.closePath();
 
-        // Render the label and background
-        if (this.label !== null && this.label.trim() !== ""){
-            if (this.isSelected) {
-                ctx.font = "bold 14px Arial";
-            } else {
-                ctx.font = "12px Arial";
+        // 绘制折线
+        if (this.pathPoints && this.pathPoints.length > 1) {
+            ctx.beginPath();
+            const [startX, startY] = this.toCanvasCoordinates(this.pathPoints[0][0], this.pathPoints[0][1]);
+            ctx.moveTo(startX, startY);
+            for (let i = 1; i < this.pathPoints.length; i++) {
+                const [x, y] = this.toCanvasCoordinates(this.pathPoints[i][0], this.pathPoints[i][1]);
+                ctx.lineTo(x, y);
             }
-            const labelWidth = ctx.measureText(this.label).width + 10;
-            const labelHeight = 20;
-            let labelX = this.xmin;
-            let labelY = this.ymin - labelHeight;
-            ctx.fillStyle = "white";
-            [labelX, labelY] = this.toCanvasCoordinates(labelX, labelY);
-            ctx.fillRect(labelX, labelY, labelWidth, labelHeight);
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "black";
-            ctx.strokeRect(labelX, labelY, labelWidth, labelHeight);
-            ctx.fillStyle = "black";
-            ctx.fillText(this.label, labelX + 5, labelY + 15);
+            ctx.strokeStyle = setAlpha(this.color, 1);
+            ctx.lineWidth = this.isSelected ? this.selectedThickness : this.thickness;
+            ctx.stroke();
+            ctx.closePath();
         }
+
+        // Render the label and background
+        // if (this.label !== null && this.label.trim() !== ""){
+        if (this.isSelected) {
+            ctx.font = "bold 14px Arial";
+        } else {
+            ctx.font = "12px Arial";
+        }
+        const showText = this.name + '[' + this.label + ']';
+        const labelWidth = ctx.measureText(showText).width + 10;
+        const labelHeight = 20;
+        let labelX = this.xmin;
+        let labelY = this.ymin - labelHeight;
+        ctx.fillStyle = "white";
+        [labelX, labelY] = this.toCanvasCoordinates(labelX, labelY);
+        ctx.fillRect(labelX, labelY, labelWidth, labelHeight);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(labelX, labelY, labelWidth, labelHeight);
+        ctx.fillStyle = "black";
+        ctx.fillText(showText, labelX + 5, labelY + 15);
+        // }
 
         // Render the handles
         ctx.fillStyle = setAlpha(this.color, 1);
@@ -301,6 +346,14 @@ export default class Box {
             this.ymin += deltaY;
             this.xmax += deltaX;
             this.ymax += deltaY;
+
+            if (this.isLine) {
+                for (let i = 0; i < this.pathPoints.length; i++) {
+                    this.pathPoints[i][0] += deltaX;
+                    this.pathPoints[i][1] += deltaY;
+                }
+            }
+
             this.updateHandles();
             this.renderCallBack();
         }
@@ -347,40 +400,56 @@ export default class Box {
             x -= this.offsetMouseX;
             y -= this.offsetMouseY;
 
-            if (x > this.xmax) {
-                if (this.creatingAnchorX == "xmax") {
-                    this.xmin = this.xmax;
-                }
-                this.xmax = x;
-                this.creatingAnchorX = "xmin";
-            } else if (x > this.xmin && x < this.xmax && this.creatingAnchorX == "xmin") {
-                this.xmax = x;
-            } else if (x > this.xmin && x < this.xmax && this.creatingAnchorX == "xmax") {
-                this.xmin = x;
-            } else if (x < this.xmin) {
-                if (this.creatingAnchorX == "xmin") {
-                    this.xmax = this.xmin;
-                }
-                this.xmin = x;
-                this.creatingAnchorX = "xmax";
-            }
+            if (this.isLine) {
+                this.pathPoints.push([x, y]);
 
-            if (y > this.ymax) {
-                if (this.creatingAnchorY == "ymax") {
-                    this.ymin = this.ymax;
+                if (x < this.xmin) {
+                    this.xmin = x;
+                } else if (x > this.xmax) {
+                    this.xmax = x;
                 }
-                this.ymax = y;
-                this.creatingAnchorY = "ymin";
-            } else if (y > this.ymin && y < this.ymax && this.creatingAnchorY == "ymin") {
-                this.ymax = y;
-            } else if (y > this.ymin && y < this.ymax && this.creatingAnchorY == "ymax") {
-                this.ymin = y;
-            } else if (y < this.ymin) {
-                if (this.creatingAnchorY == "ymin") {
-                    this.ymax = this.ymin;
+
+                if (y < this.ymin) {
+                    this.ymin = y;
+                } else if (y > this.ymax) {
+                    this.ymax = y;
                 }
-                this.ymin = y;
-                this.creatingAnchorY = "ymax";
+            } else {
+                if (x > this.xmax) {
+                    if (this.creatingAnchorX == "xmax") {
+                        this.xmin = this.xmax;
+                    }
+                    this.xmax = x;
+                    this.creatingAnchorX = "xmin";
+                } else if (x > this.xmin && x < this.xmax && this.creatingAnchorX == "xmin") {
+                    this.xmax = x;
+                } else if (x > this.xmin && x < this.xmax && this.creatingAnchorX == "xmax") {
+                    this.xmin = x;
+                } else if (x < this.xmin) {
+                    if (this.creatingAnchorX == "xmin") {
+                        this.xmax = this.xmin;
+                    }
+                    this.xmin = x;
+                    this.creatingAnchorX = "xmax";
+                }
+
+                if (y > this.ymax) {
+                    if (this.creatingAnchorY == "ymax") {
+                        this.ymin = this.ymax;
+                    }
+                    this.ymax = y;
+                    this.creatingAnchorY = "ymin";
+                } else if (y > this.ymin && y < this.ymax && this.creatingAnchorY == "ymin") {
+                    this.ymax = y;
+                } else if (y > this.ymin && y < this.ymax && this.creatingAnchorY == "ymax") {
+                    this.ymin = y;
+                } else if (y < this.ymin) {
+                    if (this.creatingAnchorY == "ymin") {
+                        this.ymax = this.ymin;
+                    }
+                    this.ymin = y;
+                    this.creatingAnchorY = "ymax";
+                }
             }
 
             this.updateHandles();
