@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { BaseColorPicker } from "@gradio/colorpicker";
     import { BaseButton } from "@gradio/button";
-    import { BaseDropdown } from "./patched_dropdown/Index.svelte";
+    import { BaseDropdown, BaseMultiselect } from "./patched_dropdown/Index.svelte";
     import { BaseTextbox } from "@gradio/textbox";
 	import { createEventDispatcher } from "svelte";
     import { onMount, onDestroy } from "svelte";
 
     export let name = "";
-    export let label = "";
+    export let label = [];
     export let currentName = "";
-    export let currentLabel = "";
+    export let currentLabel = [];
     export let choices = [];  // [(label, i)]
     export let choicesColors = [];
     export let color = "";
@@ -94,12 +94,12 @@
                 />
             </div>
             <div style="margin-right: 10px;">
-                <BaseDropdown
+                <BaseMultiselect
                     value={currentLabel}
                     label="Label"
                     {choices}
                     show_label={true}
-                    allow_custom_value={true}
+                    allow_custom_value={false}
                     on:change={onDropDownChange}
                     on:enter={onDropDownEnter}
                 />

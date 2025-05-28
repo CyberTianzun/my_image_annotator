@@ -36,7 +36,6 @@ def rgb2hex(r,g,b):
 class AnnotatedImageData(GradioModel):
     image: FileData
     boxes: List[dict] = []
-    lines: List[dict] = []
 
 
 class my_image_annotator(Component):
@@ -248,7 +247,7 @@ class my_image_annotator(Component):
             new_box = {}
             new_box["isLine"] = box.get("isLine", False)
             new_box["name"] = box.get("name", "")
-            new_box["label"] = box.get("label", "")
+            new_box["label"] = box.get("label", [])
             new_box["color"] = (0,0,0)
             if "color" in box:
                 match = re.match(r'rgb\((\d+), (\d+), (\d+)\)', box["color"])
@@ -350,7 +349,7 @@ class my_image_annotator(Component):
                     "ymin": 70,
                     "xmax": 530,
                     "ymax": 500,
-                    "label": "Gradio",
+                    "label": ["Gradio"],
                     "color": (250,185,0),
                 }
             ]

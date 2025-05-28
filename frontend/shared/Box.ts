@@ -148,6 +148,12 @@ export default class Box {
         this.ymin = Math.round(this.ymin * scale);
         this.xmax = Math.round(this.xmax * scale);
         this.ymax = Math.round(this.ymax * scale);
+        // if (this.isLine) {
+        //     for (let i = 0; i < this.pathPoints.length; i++) {
+        //         this.pathPoints[i][0] = Math.round(this.pathPoints[i][0] * scale);
+        //         this.pathPoints[i][1] = Math.round(this.pathPoints[i][1] * scale);
+        //     }
+        // }
         this.updateHandles();
         this.scaleFactor = scaleFactor;
     }
@@ -237,8 +243,8 @@ export default class Box {
     }
 
     toCanvasCoordinates(x: number, y: number): [number, number] {
-        x = x + this.canvasXmin;
-        y = y + this.canvasYmin;
+        x = (x + this.canvasXmin);
+        y = (y + this.canvasYmin);
         return [x, y];
     }
 
@@ -273,10 +279,12 @@ export default class Box {
         // 绘制折线
         if (this.pathPoints && this.pathPoints.length > 1) {
             ctx.beginPath();
-            const [startX, startY] = this.toCanvasCoordinates(this.pathPoints[0][0], this.pathPoints[0][1]);
+            // const [startX, startY] = this.toCanvasCoordinates(this.pathPoints[0][0], this.pathPoints[0][1]);
+            const [startX, startY] = this.toCanvasCoordinates(Math.round(this.pathPoints[0][0] * this.scaleFactor), Math.round(this.pathPoints[0][1] * this.scaleFactor));
             ctx.moveTo(startX, startY);
             for (let i = 1; i < this.pathPoints.length; i++) {
-                const [x, y] = this.toCanvasCoordinates(this.pathPoints[i][0], this.pathPoints[i][1]);
+                // const [x, y] = this.toCanvasCoordinates(this.pathPoints[i][0], this.pathPoints[i][1]);
+                const [x, y] = this.toCanvasCoordinates(Math.round(this.pathPoints[i][0] * this.scaleFactor), Math.round(this.pathPoints[i][1] * this.scaleFactor));
                 ctx.lineTo(x, y);
             }
             ctx.strokeStyle = setAlpha(this.color, 1);
@@ -349,8 +357,8 @@ export default class Box {
 
             if (this.isLine) {
                 for (let i = 0; i < this.pathPoints.length; i++) {
-                    this.pathPoints[i][0] += deltaX;
-                    this.pathPoints[i][1] += deltaY;
+                    this.pathPoints[i][0] += deltaX / this.scaleFactor;
+                    this.pathPoints[i][1] += deltaY / this.scaleFactor;
                 }
             }
 
@@ -401,7 +409,7 @@ export default class Box {
             y -= this.offsetMouseY;
 
             if (this.isLine) {
-                this.pathPoints.push([x, y]);
+                this.pathPoints.push([x / this.scaleFactor, y / this.scaleFactor]);
 
                 if (x < this.xmin) {
                     this.xmin = x;

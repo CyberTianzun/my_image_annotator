@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { afterUpdate, createEventDispatcher } from "svelte";
-	import { _, number } from "svelte-i18n";
 	import { BlockTitle } from "@gradio/atoms";
 	import { Remove, DropdownArrow } from "@gradio/icons";
-	import type { KeyUpData, SelectData, I18nFormatter } from "@gradio/utils";
+	import type { KeyUpData, SelectData } from "@gradio/utils";
 	import DropdownOptions from "./DropdownOptions.svelte";
 	import { handle_filter, handle_change, handle_shared_keys } from "./utils";
 
@@ -20,7 +19,6 @@
 	export let container = true;
 	export let allow_custom_value = false;
 	export let filterable = true;
-	export let i18n: I18nFormatter;
 
 	let filter_input: HTMLElement;
 	let input_text = "";
@@ -43,8 +41,9 @@
 		blur: undefined;
 		focus: undefined;
 		key_up: KeyUpData;
+		enter: any;
 	}>();
-
+	
 	// Setting the initial value of the multiselect dropdown
 	if (Array.isArray(value)) {
 		value.forEach((element) => {
@@ -58,8 +57,8 @@
 	}
 
 	$: {
-		choices_names = choices.map((c) => c[0]);
-		choices_values = choices.map((c) => c[1]);
+		choices_names = choices.map((c) => c[1]);
+		choices_values = choices.map((c) => c[0]);
 	}
 
 	$: {
@@ -180,6 +179,7 @@
 					input_text = "";
 				}
 			}
+			dispatch("enter", value);
 		}
 		if (e.key === "Backspace" && input_text === "") {
 			selected_indices = [...selected_indices.slice(0, -1)];
@@ -226,7 +226,7 @@
 				<div class="token">
 					<span>
 						{#if typeof s === "number"}
-							{choices_names[s]}
+							{choices_values[s]}
 						{:else}
 							{s}
 						{/if}
@@ -242,7 +242,7 @@
 							}}
 							role="button"
 							tabindex="0"
-							title={i18n("common.remove") + " " + s}
+							title="Remove"
 						>
 							<Remove />
 						</div>
@@ -276,7 +276,7 @@
 							role="button"
 							tabindex="0"
 							class="token-remove remove-all"
-							title={i18n("common.clear")}
+							title="Clear"
 							on:click={remove_all}
 							on:keydown={(event) => {
 								if (event.key === "Enter") {
