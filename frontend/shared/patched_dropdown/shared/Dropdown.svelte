@@ -91,8 +91,8 @@
 	}
 
 	function set_choice_names_values(): void {
-		choices_names = choices.map((c) => c[0]);
-		choices_values = choices.map((c) => c[1]);
+		choices_names = choices.map((c) => c[0].toString());
+		choices_values = choices.map((c) => c[0].toString());
 	}
 
 	$: choices, set_choice_names_values();

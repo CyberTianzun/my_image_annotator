@@ -17,6 +17,7 @@
 	export let boxSelectedThickness: number;
 	export let value: null | AnnotatedImageData;
 	export let choices = [];
+	export let secondChoices = [];
     export let choicesColors = [];
 	export let disableEditBoxes: boolean = false;
 	export let height: number | string = "100%";
@@ -24,7 +25,7 @@
 	export let singleBox: boolean = false;
 	export let showRemoveButton: boolean = null;
 	export let handlesCursor: boolean = true;
-
+	
 	if (showRemoveButton === null) {
 		showRemoveButton = (disableEditBoxes);
 	}
@@ -209,6 +210,7 @@
 			isLine,
 			"",
 			"",
+			"",
 			x,
 			y,
 			x,
@@ -281,12 +283,14 @@
 		const { detail } = event;
 		let name = detail.name;
 		let label = detail.label;
+		let secondLabel = detail.secondLabel;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
 			let box = value.boxes[selectedBox];
 			if (ret == 1) {
 				box.label = label;
+				box.secondLabel = secondLabel;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -302,12 +306,14 @@
 		const { detail } = event;
 		let name = detail.name;
 		let label = detail.label;
+		let secondLabel = detail.secondLabel;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
 			let box = value.boxes[selectedBox];
 			if (ret == 1) {
 				box.label = label;
+				box.secondLabel = secondLabel;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -381,6 +387,7 @@
 			if (!(box instanceof Box)) {
 				let color = "";
 				let label = "";
+				let secondLabel = "";
 				let name = "";
 				if (box.hasOwnProperty("color")) {
 					color = box["color"];
@@ -392,6 +399,9 @@
 				}
 				if (box.hasOwnProperty("label")) {
 					label = box["label"];
+				}
+				if (box.hasOwnProperty("secondLabel")) {
+					secondLabel = box["secondLabel"];
 				}
 				if (box.hasOwnProperty("name")) {
 					name = box["name"];
@@ -412,6 +422,7 @@
 					isLine,
 					name,
 					label,
+					secondLabel,
 					box["xmin"],
 					box["ymin"],
 					box["xmax"],
@@ -537,9 +548,11 @@
 		on:change={onModalEditChange}
 		on:enter{onModalEditChange}
 		choices={choices}
+		secondChoices={secondChoices}
 		choicesColors={choicesColors}
 		name={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].name : ""}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
+		secondLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].secondLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
 	/>
 {/if}
@@ -549,9 +562,11 @@
 		on:change={onModalNewChange}
 		on:enter{onModalNewChange}
 		choices={choices}
+		secondChoices={secondChoices}
 		showRemove={false}
 		choicesColors={choicesColors}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
+		secondLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].secondLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
 	/>
 {/if}

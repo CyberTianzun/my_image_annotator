@@ -13,6 +13,7 @@
 	export let interactive: boolean;
 	export let boxesAlpha: number;
 	export let labelList: string[];
+	export let secondLabelList: string[];
 	export let labelColors: string[];
 	export let boxMinSize: number;
 	export let handleSize: number;
@@ -61,6 +62,7 @@
 	{interactive}
 	boxAlpha={boxesAlpha}
 	choices={labelList}
+	secondChoices={secondLabelList}
 	choicesColors={labelColors}
 	{height}
 	{width}

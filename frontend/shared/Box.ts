@@ -17,6 +17,7 @@ function setAlpha(rgbColor: string, alpha: number) {
 export default class Box {
     name: string;
     label: string;
+    secondLabel: string;
     xmin: number;
     ymin: number;
     xmax: number;
@@ -63,6 +64,7 @@ export default class Box {
         isLine: boolean,
         name: string,
         label: string,
+        secondLabel: string,
         xmin: number,
         ymin: number,
         xmax: number,
@@ -85,6 +87,7 @@ export default class Box {
         this.scaleFactor = scaleFactor;
         this.name = name;
         this.label = label;
+        this.secondLabel = secondLabel;
         this.isDragging = false;
         this.isCreating = false;
         this.xmin = xmin;
@@ -114,6 +117,7 @@ export default class Box {
             return {
                 name: this.name,
                 label: this.label,
+                secondLabel: this.secondLabel,
                 points: this.pathPoints,
                 color: this.color,
                 scaleFactor: this.scaleFactor,
@@ -128,6 +132,7 @@ export default class Box {
         return {
             name: this.name,
             label: this.label,
+            secondLabel: this.secondLabel,
             xmin: this.xmin,
             ymin: this.ymin,
             xmax: this.xmax,
@@ -300,7 +305,7 @@ export default class Box {
         } else {
             ctx.font = "12px Arial";
         }
-        const showText = this.name + '[' + this.label + ']';
+        const showText = this.name + '[' + this.label + ']' + this.secondLabel;
         const labelWidth = ctx.measureText(showText).width + 10;
         const labelHeight = 20;
         let labelX = this.xmin;

@@ -8,9 +8,12 @@
 
     export let name = "";
     export let label = [];
+    export let secondLabel = "";
     export let currentName = "";
     export let currentLabel = [];
     export let choices = [];  // [(label, i)]
+    export let currentSecondLabel = '';
+    export let secondChoices = [];  // [(label, i)]
     export let choicesColors = [];
     export let color = "";
     export let currentColor = "";
@@ -23,6 +26,7 @@
     function dispatchChange(ret: number) {
         dispatch("change", {
             label: currentLabel,
+            secondLabel: currentSecondLabel,
             color: currentColor,
             name: currentName,
             ret: ret // -1: remove, 0: cancel, 1: change
@@ -51,6 +55,19 @@
         }
     }
 
+    function onSecondDropDownChange(event) {
+        const { detail } = event;
+		let choice = detail;
+
+        if (Number.isInteger(choice)) {
+            if (Array.isArray(secondChoices) && choice < secondChoices.length) {
+                currentSecondLabel = secondChoices[choice][0];
+            }
+        } else {
+            currentSecondLabel = choice;
+        }
+    }
+
     function onColorChange(event) {
         const { detail } = event;
 		currentColor = detail;
@@ -58,6 +75,11 @@
 
     function onDropDownEnter(event) {
         onDropDownChange(event);
+        dispatchChange(1);
+    }
+
+    function onSecondDropDownEnter(event) {
+        onSecondDropDownChange(event);
         dispatchChange(1);
     }
 
@@ -72,6 +94,7 @@
 	onMount(() => {
 		document.addEventListener("keydown", handleKeyPress);
         currentLabel = label;
+        currentSecondLabel = secondLabel;
         currentName = name;
         currentColor = color;
 	});
@@ -84,7 +107,7 @@
 
 <div class="modal" id="model-box-edit">
     <div class="modal-container">
-        <span class="model-content">
+        <div class="model-content">
             <div style="margin-right: 10px;">
                 <BaseTextbox
                     value={name}
@@ -93,7 +116,7 @@
                     on:change={onTextboxChange}
                 />
             </div>
-            <div style="margin-right: 10px;">
+            <div style="margin-right: 10px; margin-top: 10px;">
                 <BaseMultiselect
                     value={currentLabel}
                     label="Label"
@@ -104,34 +127,47 @@
                     on:enter={onDropDownEnter}
                 />
             </div>
-            <div style="margin-right: 40px; margin-bottom: 8px;">
+            <div style="margin-right: 10px; margin-top: 10px;">
+                <BaseDropdown
+                    value={currentSecondLabel}
+                    label="Second Label"
+                    choices={secondChoices}
+                    show_label={true}
+                    allow_custom_value={false}
+                    on:change={onSecondDropDownChange}
+                    on:enter={onSecondDropDownEnter}
+                />
+            </div>
+            <div style="margin-right: 40px; margin-bottom: 8px; margin-top: 10px;">
                 <BaseColorPicker
                     value={currentColor}
                     label="Color"
-                    show_label={false}
+                    show_label={true}
                     on:change={onColorChange}
                 />
             </div>
-            <div style="margin-right: 8px;">
-                <BaseButton
-                on:click={() => dispatchChange(0)}
-                >Cancel</BaseButton>
-            </div>
-            {#if showRemove}
+            <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px;">
                 <div style="margin-right: 8px;">
                     <BaseButton
-                        variant="stop"
-                        on:click={() => dispatchChange(-1)}
-                    >Remove</BaseButton>
+                    on:click={() => dispatchChange(0)}
+                    >Cancel</BaseButton>
                 </div>
-            {/if}
-            <div>
-                <BaseButton
-                    variant="primary"
-                    on:click={() => dispatchChange(1)}
-                >OK</BaseButton>
+                {#if showRemove}
+                    <div style="margin-right: 8px;">
+                        <BaseButton
+                            variant="stop"
+                            on:click={() => dispatchChange(-1)}
+                        >Remove</BaseButton>
+                    </div>
+                {/if}
+                <div>
+                    <BaseButton
+                        variant="primary"
+                        on:click={() => dispatchChange(1)}
+                    >OK</BaseButton>
+                </div>
             </div>
-        </span>
+        </div>
     </div>
 </div>
 
@@ -164,7 +200,12 @@
     }
 
     .model-content {
+        display: block;
+        align-items: baseline;
+    }
+
+    /* .model-content {
         display: flex;
         align-items: flex-end;
-    }
+    } */
 </style>

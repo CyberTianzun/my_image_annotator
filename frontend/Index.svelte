@@ -40,6 +40,7 @@
 	export let interactive: boolean;
 	export let boxes_alpha: number;
 	export let label_list: string[];
+	export let second_label_list: string[];
 	export let label_colors: string[];
 	export let box_min_size: number;
 	export let handle_size: number;
@@ -100,6 +101,7 @@
 		height={height}
 		width={width}
 		labelList={label_list}
+		secondLabelList={second_label_list}
 		labelColors={label_colors}
 		boxMinSize={box_min_size}
 		on:edit={() => gradio.dispatch("edit")}

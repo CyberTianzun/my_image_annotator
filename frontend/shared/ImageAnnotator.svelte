@@ -27,6 +27,7 @@
 	export let showClearButton: boolean;
 	export let boxesAlpha;
 	export let labelList: string[];
+	export let secondLabelList: string[];
 	export let labelColors: string[];
 	export let boxMinSize: number;
 	export let handleSize: number;
@@ -177,6 +178,7 @@
 					{width}
 					{boxesAlpha}
 					{labelList}
+					{secondLabelList}
 					{labelColors}
 					{boxMinSize}
 					{interactive}

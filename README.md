@@ -37,6 +37,7 @@ example_annotation = {
             "xmax": 1056,
             "ymax": 413,
             "label": ["Person"],
+            "secondLabel": 'Test2',
             "color": (0, 0, 255),
             "name": "xxx",
             "isLine": True,
@@ -48,6 +49,7 @@ example_annotation = {
             "xmax":3238,
             "ymax":1875,
             "label": ["Person"],
+            "secondLabel": 'Test',
             "color": (0, 255, 0),
             "name": "222",
             "isLine": True,
@@ -66,6 +68,7 @@ with gr.Blocks() as demo:
         annotator = my_image_annotator(
             example_annotation,
             label_list=["Person", "Vehicle"],
+            second_label_list=["Test", "Test2"],
             label_colors=[(0, 255, 0), (255, 0, 0)],
         )
         button_get = gr.Button("Get bounding boxes")
@@ -128,6 +131,19 @@ list[str] | None
 </td>
 <td align="left"><code>None</code></td>
 <td align="left">List of valid labels.</td>
+</tr>
+
+<tr>
+<td align="left"><code>second_label_list</code></td>
+<td align="left" style="width: 25%;">
+
+```python
+list[str] | None
+```
+
+</td>
+<td align="left"><code>None</code></td>
+<td align="left">None</td>
 </tr>
 
 <tr>
@@ -301,7 +317,7 @@ list["upload" | "webcam" | "clipboard"] | None
 <td align="left" style="width: 25%;">
 
 ```python
-str | None
+list | None
 ```
 
 </td>

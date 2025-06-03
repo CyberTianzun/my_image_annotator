@@ -60,6 +60,7 @@ class my_image_annotator(Component):
         *,
         boxes_alpha: float | None = None,
         label_list: list[str] | None = None,
+        second_label_list: list[str] | None = None,
         label_colors: list[str] | None = None,
         box_min_size: int | None = None,
         handle_size: int | None = None,
@@ -78,7 +79,7 @@ class my_image_annotator(Component):
             "clipboard",
         ],
         image_type: Literal["numpy", "pil", "filepath"] = "numpy",
-        label: str | None = None,
+        label: list | None = None,
         container: bool = True,
         scale: int | None = None,
         min_width: int = 160,
@@ -172,6 +173,10 @@ class my_image_annotator(Component):
             self.label_list = [(l, i) for i, l in enumerate(label_list)]
         else:
             self.label_list = None
+        if second_label_list:
+            self.second_label_list = [(l, i) for i, l in enumerate(second_label_list)]
+        else:
+            self.second_label_list = None
         
         # Parse colors
         self.label_colors = label_colors
@@ -248,6 +253,7 @@ class my_image_annotator(Component):
             new_box["isLine"] = box.get("isLine", False)
             new_box["name"] = box.get("name", "")
             new_box["label"] = box.get("label", [])
+            new_box["secondLabel"] = box.get("secondLabel", "")
             new_box["color"] = (0,0,0)
             if "color" in box:
                 match = re.match(r'rgb\((\d+), (\d+), (\d+)\)', box["color"])
@@ -350,6 +356,7 @@ class my_image_annotator(Component):
                     "xmax": 530,
                     "ymax": 500,
                     "label": ["Gradio"],
+                    "secondLabel": "Test",
                     "color": (250,185,0),
                 }
             ]
