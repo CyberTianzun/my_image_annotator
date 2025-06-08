@@ -11,3 +11,4 @@ __tmp/*
 node_modules
 backend/**/templates/
 .DS_Store
+demo/map1_block5_diaoyudi1_front_s.show.png

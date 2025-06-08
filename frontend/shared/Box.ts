@@ -18,6 +18,8 @@ export default class Box {
     name: string;
     label: string;
     secondLabel: string;
+    thirdLabel: string;
+    fourthLabel: string;
     xmin: number;
     ymin: number;
     xmax: number;
@@ -63,8 +65,10 @@ export default class Box {
         canvasYmax: number,
         isLine: boolean,
         name: string,
-        label: string,
+        label: Array<string>,
         secondLabel: string,
+        thirdLabel: Array<string>,
+        fourthLabel: Array<string>,
         xmin: number,
         ymin: number,
         xmax: number,
@@ -88,6 +92,8 @@ export default class Box {
         this.name = name;
         this.label = label;
         this.secondLabel = secondLabel;
+        this.thirdLabel = thirdLabel;
+        this.fourthLabel = fourthLabel;
         this.isDragging = false;
         this.isCreating = false;
         this.xmin = xmin;
@@ -118,6 +124,8 @@ export default class Box {
                 name: this.name,
                 label: this.label,
                 secondLabel: this.secondLabel,
+                thirdLabel: this.thirdLabel,
+                fourthLabel: this.fourthLabel,
                 points: this.pathPoints,
                 color: this.color,
                 scaleFactor: this.scaleFactor,
@@ -133,6 +141,8 @@ export default class Box {
             name: this.name,
             label: this.label,
             secondLabel: this.secondLabel,
+            thirdLabel: this.thirdLabel,
+            fourthLabel: this.fourthLabel,
             xmin: this.xmin,
             ymin: this.ymin,
             xmax: this.xmax,
@@ -275,7 +285,11 @@ export default class Box {
         } else {
             ctx.lineWidth = this.thickness;
         }
-        ctx.strokeStyle = setAlpha(this.color, 0.5);
+        if (!this.isLine) {
+            ctx.strokeStyle = setAlpha(this.color, 0.5);
+        } else {
+            ctx.strokeStyle = setAlpha(this.color, 0.1);
+        }
 
         
         ctx.stroke();
@@ -296,6 +310,62 @@ export default class Box {
             ctx.lineWidth = this.isSelected ? this.selectedThickness : this.thickness;
             ctx.stroke();
             ctx.closePath();
+
+            // 绘制箭头
+            if (this.pathPoints.length >= 2) {
+                const lastPoint = this.pathPoints[this.pathPoints.length - 1];
+                const [endX, endY] = this.toCanvasCoordinates(Math.round(lastPoint[0] * this.scaleFactor), Math.round(lastPoint[1] * this.scaleFactor));
+                
+                // 使用最后几个点计算平滑方向
+                const smoothPoints = Math.min(15, this.pathPoints.length); // 最多使用5个点
+                let avgDx = 0;
+                let avgDy = 0;
+                let validVectors = 0;
+                
+                for (let i = this.pathPoints.length - smoothPoints; i < this.pathPoints.length - 1; i++) {
+                    const currentPoint = this.pathPoints[i];
+                    const nextPoint = this.pathPoints[i + 1];
+                    
+                    const dx = nextPoint[0] - currentPoint[0];
+                    const dy = nextPoint[1] - currentPoint[1];
+                    
+                    // 只考虑有意义的向量（长度大于0）
+                    if (Math.sqrt(dx * dx + dy * dy) > 0.1) {
+                        avgDx += dx;
+                        avgDy += dy;
+                        validVectors++;
+                    }
+                }
+                
+                if (validVectors > 0) {
+                    avgDx /= validVectors;
+                    avgDy /= validVectors;
+                    
+                    // 计算平滑后的角度
+                    const angle = Math.atan2(avgDy, avgDx);
+                    
+                    // 箭头参数
+                    const arrowLength = 20;
+                    const arrowAngle = Math.PI / 6; // 30度
+                    
+                    // 计算箭头的两个端点
+                    const arrowX1 = endX - arrowLength * Math.cos(angle - arrowAngle);
+                    const arrowY1 = endY - arrowLength * Math.sin(angle - arrowAngle);
+                    const arrowX2 = endX - arrowLength * Math.cos(angle + arrowAngle);
+                    const arrowY2 = endY - arrowLength * Math.sin(angle + arrowAngle);
+                    
+                    // 绘制箭头
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(arrowX1, arrowY1);
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(arrowX2, arrowY2);
+                    ctx.strokeStyle = setAlpha(this.color, 1);
+                    ctx.lineWidth = this.isSelected ? this.selectedThickness : this.thickness;
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            }
         }
 
         // Render the label and background
@@ -305,7 +375,7 @@ export default class Box {
         } else {
             ctx.font = "12px Arial";
         }
-        const showText = this.name + '[' + this.label + ']' + this.secondLabel;
+        const showText = this.name + '[' + this.label + ']' + this.secondLabel + '[' + this.thirdLabel + ']' + this.fourthLabel;
         const labelWidth = ctx.measureText(showText).width + 10;
         const labelHeight = 20;
         let labelX = this.xmin;

@@ -61,6 +61,8 @@ class my_image_annotator(Component):
         boxes_alpha: float | None = None,
         label_list: list[str] | None = None,
         second_label_list: list[str] | None = None,
+        third_label_list: list[str] | None = None,
+        fourth_label_list: list[str] | None = None,
         label_colors: list[str] | None = None,
         box_min_size: int | None = None,
         handle_size: int | None = None,
@@ -177,6 +179,14 @@ class my_image_annotator(Component):
             self.second_label_list = [(l, i) for i, l in enumerate(second_label_list)]
         else:
             self.second_label_list = None
+        if third_label_list:
+            self.third_label_list = [(l, i) for i, l in enumerate(third_label_list)]
+        else:
+            self.third_label_list = None
+        if fourth_label_list:
+            self.fourth_label_list = [(l, i) for i, l in enumerate(fourth_label_list)]
+        else:
+            self.fourth_label_list = None
         
         # Parse colors
         self.label_colors = label_colors
@@ -254,6 +264,8 @@ class my_image_annotator(Component):
             new_box["name"] = box.get("name", "")
             new_box["label"] = box.get("label", [])
             new_box["secondLabel"] = box.get("secondLabel", "")
+            new_box["thirdLabel"] = box.get("thirdLabel", "")
+            new_box["fourthLabel"] = box.get("fourthLabel", "")
             new_box["color"] = (0,0,0)
             if "color" in box:
                 match = re.match(r'rgb\((\d+), (\d+), (\d+)\)', box["color"])
@@ -357,6 +369,8 @@ class my_image_annotator(Component):
                     "ymax": 500,
                     "label": ["Gradio"],
                     "secondLabel": "Test",
+                    "thirdLabel": "Apple",
+                    "fourthLabel": "Dog",
                     "color": (250,185,0),
                 }
             ]

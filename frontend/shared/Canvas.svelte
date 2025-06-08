@@ -19,6 +19,10 @@
 	export let choices = [];
 	export let secondChoices = [];
     export let choicesColors = [];
+
+	export let thirdChoices = [];
+	export let fourthChoices = [];
+
 	export let disableEditBoxes: boolean = false;
 	export let height: number | string = "100%";
 	export let width: number | string = "100%";
@@ -209,8 +213,10 @@
 			canvasYmax,
 			isLine,
 			"",
+			[],
 			"",
-			"",
+			[],
+			[],
 			x,
 			y,
 			x,
@@ -284,6 +290,8 @@
 		let name = detail.name;
 		let label = detail.label;
 		let secondLabel = detail.secondLabel;
+		let thirdLabel = detail.thirdLabel;
+		let fourthLabel = detail.fourthLabel;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
@@ -291,6 +299,8 @@
 			if (ret == 1) {
 				box.label = label;
 				box.secondLabel = secondLabel;
+				box.thirdLabel = thirdLabel;
+				box.fourthLabel = fourthLabel;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -307,6 +317,8 @@
 		let name = detail.name;
 		let label = detail.label;
 		let secondLabel = detail.secondLabel;
+		let thirdLabel = detail.thirdLabel;
+		let fourthLabel = detail.fourthLabel;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
@@ -314,6 +326,8 @@
 			if (ret == 1) {
 				box.label = label;
 				box.secondLabel = secondLabel;
+				box.thirdLabel = thirdLabel;
+				box.fourthLabel = fourthLabel;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -386,8 +400,10 @@
 			let box = value.boxes[i];
 			if (!(box instanceof Box)) {
 				let color = "";
-				let label = "";
+				let label = [];
 				let secondLabel = "";
+				let thirdLabel = [];
+				let fourthLabel = [];
 				let name = "";
 				if (box.hasOwnProperty("color")) {
 					color = box["color"];
@@ -402,6 +418,12 @@
 				}
 				if (box.hasOwnProperty("secondLabel")) {
 					secondLabel = box["secondLabel"];
+				}
+				if (box.hasOwnProperty("thirdLabel")) {
+					thirdLabel = box["thirdLabel"];
+				}
+				if (box.hasOwnProperty("fourthLabel")) {
+					fourthLabel = box["fourthLabel"];
 				}
 				if (box.hasOwnProperty("name")) {
 					name = box["name"];
@@ -423,6 +445,8 @@
 					name,
 					label,
 					secondLabel,
+					thirdLabel,
+					fourthLabel,
 					box["xmin"],
 					box["ymin"],
 					box["xmax"],
@@ -549,10 +573,14 @@
 		on:enter{onModalEditChange}
 		choices={choices}
 		secondChoices={secondChoices}
+		thirdChoices={thirdChoices}
+		fourthChoices={fourthChoices}
 		choicesColors={choicesColors}
 		name={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].name : ""}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
 		secondLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].secondLabel : ""}
+		thirdLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].thirdLabel : ""}
+		fourthLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].fourthLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
 	/>
 {/if}
@@ -563,10 +591,14 @@
 		on:enter{onModalNewChange}
 		choices={choices}
 		secondChoices={secondChoices}
+		thirdChoices={thirdChoices}
+		fourthChoices={fourthChoices}
 		showRemove={false}
 		choicesColors={choicesColors}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
 		secondLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].secondLabel : ""}
+		thirdLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].thirdLabel : ""}
+		fourthLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].fourthLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
 	/>
 {/if}
