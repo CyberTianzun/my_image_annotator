@@ -24,6 +24,12 @@
     export let fourthLabel = [];
     export let currentFourthLabel = [];
     export let fourthChoices = [];  // [(label, i)]
+
+    export let startScale = "1.0";
+    export let currentStartScale = "1.0";
+
+    export let endScale = "1.0";
+    export let currentEndScale = "1.0";
     
     export let choicesColors = [];
     export let color = "";
@@ -42,6 +48,8 @@
             fourthLabel: currentFourthLabel,
             color: currentColor,
             name: currentName,
+            startScale: currentStartScale,
+            endScale: currentEndScale,
             ret: ret // -1: remove, 0: cancel, 1: change
         });
     }
@@ -50,6 +58,18 @@
         const { detail } = event;
 		let choice = detail;
         currentName = choice;
+    }
+
+    function onStartScaleChange(event) {
+        const { detail } = event;
+		let choice = detail;
+        currentStartScale = choice;
+    }
+
+    function onEndScaleChange(event) {
+        const { detail } = event;
+		let choice = detail;
+        currentEndScale = choice;
     }
 
     function onDropDownChange(event) {
@@ -148,6 +168,8 @@
         currentFourthLabel = fourthLabel;
         currentName = name;
         currentColor = color;
+        currentStartScale = startScale;
+        currentEndScale = endScale;
 	});
     
 	onDestroy(() => {
@@ -209,6 +231,22 @@
                     label="Name"
                     show_label={true}
                     on:change={onTextboxChange}
+                />
+            </div>
+            <div style="margin-right: 10px;">
+                <BaseTextbox
+                    value={startScale}
+                    label="Start Scale"
+                    show_label={true}
+                    on:change={onStartScaleChange}
+                />
+            </div>
+            <div style="margin-right: 10px;">
+                <BaseTextbox
+                    value={endScale}
+                    label="End Scale"
+                    show_label={true}
+                    on:change={onEndScaleChange}
                 />
             </div>
             <div style="margin-right: 40px; margin-bottom: 8px; margin-top: 10px;">

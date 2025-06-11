@@ -263,6 +263,8 @@ class my_image_annotator(Component):
             new_box["isLine"] = box.get("isLine", False)
             new_box["name"] = box.get("name", "")
             new_box["label"] = box.get("label", [])
+            new_box["startScale"] = box.get("startScale", "1.0")
+            new_box["endScale"] = box.get("endScale", "1.0")
             new_box["secondLabel"] = box.get("secondLabel", "")
             new_box["thirdLabel"] = box.get("thirdLabel", "")
             new_box["fourthLabel"] = box.get("fourthLabel", "")

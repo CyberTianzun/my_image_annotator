@@ -20,6 +20,8 @@ export default class Box {
     secondLabel: string;
     thirdLabel: string;
     fourthLabel: string;
+    startScale: string;
+    endScale: string;
     xmin: number;
     ymin: number;
     xmax: number;
@@ -69,6 +71,8 @@ export default class Box {
         secondLabel: string,
         thirdLabel: Array<string>,
         fourthLabel: Array<string>,
+        startScale: string,
+        endScale: string,
         xmin: number,
         ymin: number,
         xmax: number,
@@ -94,6 +98,8 @@ export default class Box {
         this.secondLabel = secondLabel;
         this.thirdLabel = thirdLabel;
         this.fourthLabel = fourthLabel;
+        this.startScale = startScale;
+        this.endScale = endScale;
         this.isDragging = false;
         this.isCreating = false;
         this.xmin = xmin;
@@ -126,6 +132,8 @@ export default class Box {
                 secondLabel: this.secondLabel,
                 thirdLabel: this.thirdLabel,
                 fourthLabel: this.fourthLabel,
+                startScale: this.startScale,
+                endScale: this.endScale,
                 points: this.pathPoints,
                 color: this.color,
                 scaleFactor: this.scaleFactor,
@@ -143,6 +151,8 @@ export default class Box {
             secondLabel: this.secondLabel,
             thirdLabel: this.thirdLabel,
             fourthLabel: this.fourthLabel,
+            startScale: this.startScale,
+            endScale: this.endScale,
             xmin: this.xmin,
             ymin: this.ymin,
             xmax: this.xmax,
@@ -375,7 +385,7 @@ export default class Box {
         } else {
             ctx.font = "12px Arial";
         }
-        const showText = this.name + '[' + this.label + ']' + this.secondLabel + '[' + this.thirdLabel + ']' + this.fourthLabel;
+        const showText = this.name + '[' + this.label + ']' + this.secondLabel + '[' + this.thirdLabel + ']' + this.fourthLabel + '[' + this.startScale + ']' + '[' + this.endScale + ']';
         const labelWidth = ctx.measureText(showText).width + 10;
         const labelHeight = 20;
         let labelX = this.xmin;

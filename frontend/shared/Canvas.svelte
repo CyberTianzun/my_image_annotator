@@ -217,6 +217,8 @@
 			"",
 			[],
 			[],
+			"1.0",
+			"1.0",
 			x,
 			y,
 			x,
@@ -292,6 +294,8 @@
 		let secondLabel = detail.secondLabel;
 		let thirdLabel = detail.thirdLabel;
 		let fourthLabel = detail.fourthLabel;
+		let startScale = detail.startScale;
+		let endScale = detail.endScale;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
@@ -301,6 +305,8 @@
 				box.secondLabel = secondLabel;
 				box.thirdLabel = thirdLabel;
 				box.fourthLabel = fourthLabel;
+				box.startScale = startScale;
+				box.endScale = endScale;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -319,6 +325,8 @@
 		let secondLabel = detail.secondLabel;
 		let thirdLabel = detail.thirdLabel;
 		let fourthLabel = detail.fourthLabel;
+		let startScale = detail.startScale;
+		let endScale = detail.endScale;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
@@ -328,6 +336,8 @@
 				box.secondLabel = secondLabel;
 				box.thirdLabel = thirdLabel;
 				box.fourthLabel = fourthLabel;
+				box.startScale = startScale;
+				box.endScale = endScale;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -404,6 +414,8 @@
 				let secondLabel = "";
 				let thirdLabel = [];
 				let fourthLabel = [];
+				let startScale = "1.0";
+				let endScale = "1.0";
 				let name = "";
 				if (box.hasOwnProperty("color")) {
 					color = box["color"];
@@ -428,6 +440,12 @@
 				if (box.hasOwnProperty("name")) {
 					name = box["name"];
 				}
+				if (box.hasOwnProperty("startScale")) {
+					startScale = box["startScale"];
+				}
+				if (box.hasOwnProperty("endScale")) {
+					endScale = box["endScale"];
+				}
 				const isLine = box['isLine'] || false;
 				let pathPoints = [];
 				if (box.hasOwnProperty("points")) {
@@ -447,6 +465,8 @@
 					secondLabel,
 					thirdLabel,
 					fourthLabel,
+					box["startScale"],
+					box["endScale"],
 					box["xmin"],
 					box["ymin"],
 					box["xmax"],
@@ -582,6 +602,8 @@
 		thirdLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].thirdLabel : ""}
 		fourthLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].fourthLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
+		startScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].startScale : ""}
+		endScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].endScale : ""}
 	/>
 {/if}
 
@@ -600,6 +622,8 @@
 		thirdLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].thirdLabel : ""}
 		fourthLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].fourthLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
+		startScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].startScale : ""}
+		endScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].endScale : ""}
 	/>
 {/if}
 
