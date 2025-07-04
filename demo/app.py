@@ -46,6 +46,17 @@ def get_boxes_json(annotations):
     return annotations["boxes"]
 
 
+def on_change(annotator):
+    print('***************************onchange')
+    print(annotator)
+
+
+def on_select(annotator, evt: gr.SelectData):
+    print('***************************onselect')
+    print(annotator)
+    print(evt)
+
+
 with gr.Blocks() as demo:
     with gr.Tab("Object annotation", id="tab_object_annotation"):
         annotator = my_image_annotator(
@@ -59,6 +70,8 @@ with gr.Blocks() as demo:
         button_get = gr.Button("Get bounding boxes")
         json_boxes = gr.JSON()
         button_get.click(get_boxes_json, annotator, json_boxes)
+        # annotator.change(on_change, inputs=[], outputs=[])
+        annotator.select(on_select, inputs=[], outputs=[])
 
 
 if __name__ == "__main__":

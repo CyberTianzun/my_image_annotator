@@ -287,7 +287,7 @@ export default class Box {
         [xmin, ymin] = this.toCanvasCoordinates(this.xmin, this.ymin);
         ctx.rect(xmin, ymin, this.getWidth(), this.getHeight());
         if (!this.isLine) {
-            ctx.fillStyle = setAlpha(this.color, this.alpha);
+            ctx.fillStyle = setAlpha(this.color, 0.3);
             ctx.fill();
         }
         if (this.isSelected) {

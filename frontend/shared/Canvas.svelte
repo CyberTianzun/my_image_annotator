@@ -5,6 +5,7 @@
 	import Box from "./Box";
 	import { Colors } from './Colors.js';
 	import AnnotatedImageData from "./AnnotatedImageData";
+	import type { SelectData } from "@gradio/utils";
 
 	enum Mode {creation, drag, creationLine}
 
@@ -58,6 +59,7 @@
 
 	const dispatch = createEventDispatcher<{
 		change: undefined;
+		select: SelectData;
 	}>();
 
 	function colorHexToRGB(hex: string) {
@@ -93,6 +95,10 @@
 		value.boxes.forEach(box => {box.setSelected(false);});
 		if (index >= 0 && index < value.boxes.length){
 			value.boxes[index].setSelected(true);
+			dispatch("select", { index: index, value: value.boxes[index] });
+		}
+		if (index < 0) {
+			dispatch("select", { index: index, value: null });
 		}
 		draw();
 	}

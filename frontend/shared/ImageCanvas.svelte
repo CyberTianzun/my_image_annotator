@@ -4,6 +4,7 @@
     import { createEventDispatcher } from "svelte";
 	import Canvas from "./Canvas.svelte"
 	import AnnotatedImageData from "./AnnotatedImageData";
+	import type { SelectData } from "@gradio/utils";
 
 	interface Props extends HTMLImgAttributes {
 		"data-testid"?: string;
@@ -54,6 +55,7 @@
 
 	const dispatch = createEventDispatcher<{
 		change: undefined;
+		select: SelectData;
 	}>();
 
 </script>
@@ -61,6 +63,7 @@
 <Canvas
 	bind:value
 	on:change={() => dispatch("change")}
+	on:select={({detail}) => { dispatch("select", detail) }}
 	{interactive}
 	boxAlpha={boxesAlpha}
 	choices={labelList}

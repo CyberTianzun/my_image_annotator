@@ -176,6 +176,7 @@
 				<ImageCanvas
 					bind:value
 					on:change={() => dispatch("change")}
+					on:select={({ detail }) => { dispatch("select", detail);}}
 					{height}
 					{width}
 					{boxesAlpha}
