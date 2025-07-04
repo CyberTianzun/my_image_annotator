@@ -71,6 +71,17 @@ def get_boxes_json(annotations):
     return annotations["boxes"]
 
 
+def on_change(annotator):
+    print('***************************onchange')
+    print(annotator)
+
+
+def on_select(annotator, evt: gr.SelectData):
+    print('***************************onselect')
+    print(annotator)
+    print(evt)
+
+
 with gr.Blocks() as demo:
     with gr.Tab("Object annotation", id="tab_object_annotation"):
         annotator = my_image_annotator(
@@ -84,6 +95,8 @@ with gr.Blocks() as demo:
         button_get = gr.Button("Get bounding boxes")
         json_boxes = gr.JSON()
         button_get.click(get_boxes_json, annotator, json_boxes)
+        # annotator.change(on_change, inputs=[], outputs=[])
+        annotator.select(on_select, inputs=[], outputs=[])
 
 
 if __name__ == "__main__":
@@ -552,6 +565,7 @@ bool | None
 | `clear` | This listener is triggered when the user clears the my_image_annotator using the clear button for the component. |
 | `change` | Triggered when the value of the my_image_annotator changes either because of user input (e.g. a user types in a textbox) OR because of a function update (e.g. an image receives a value from the output of an event trigger). See `.input()` for a listener that is only triggered by user input. |
 | `upload` | This listener is triggered when the user uploads a file into the my_image_annotator. |
+| `select` | Event listener for when the user selects or deselects the my_image_annotator. Uses event data gradio.SelectData to carry `value` referring to the label of the my_image_annotator, and `selected` to refer to state of the my_image_annotator. See EventData documentation on how to use this event data |
 
 
 
