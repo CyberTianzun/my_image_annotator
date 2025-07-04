@@ -16,12 +16,8 @@ function setAlpha(rgbColor: string, alpha: number) {
 
 export default class Box {
     name: string;
-    label: string;
-    secondLabel: string;
-    thirdLabel: string;
-    fourthLabel: string;
-    startScale: string;
-    endScale: string;
+    key: string;
+    label: Array<string>;
     xmin: number;
     ymin: number;
     xmax: number;
@@ -66,13 +62,9 @@ export default class Box {
         canvasXmax: number,
         canvasYmax: number,
         isLine: boolean,
+        key: string,
         name: string,
         label: Array<string>,
-        secondLabel: string,
-        thirdLabel: Array<string>,
-        fourthLabel: Array<string>,
-        startScale: string,
-        endScale: string,
         xmin: number,
         ymin: number,
         xmax: number,
@@ -93,13 +85,9 @@ export default class Box {
         this.canvasXmax = canvasXmax;
         this.canvasYmax = canvasYmax;
         this.scaleFactor = scaleFactor;
+        this.key = key;
         this.name = name;
         this.label = label;
-        this.secondLabel = secondLabel;
-        this.thirdLabel = thirdLabel;
-        this.fourthLabel = fourthLabel;
-        this.startScale = startScale;
-        this.endScale = endScale;
         this.isDragging = false;
         this.isCreating = false;
         this.xmin = xmin;
@@ -127,13 +115,9 @@ export default class Box {
     toJSON() {
         if (this.isLine) {
             return {
+                key: this.key,
                 name: this.name,
                 label: this.label,
-                secondLabel: this.secondLabel,
-                thirdLabel: this.thirdLabel,
-                fourthLabel: this.fourthLabel,
-                startScale: this.startScale,
-                endScale: this.endScale,
                 points: this.pathPoints,
                 color: this.color,
                 scaleFactor: this.scaleFactor,
@@ -146,13 +130,9 @@ export default class Box {
             };
         }
         return {
+            key: this.key,
             name: this.name,
             label: this.label,
-            secondLabel: this.secondLabel,
-            thirdLabel: this.thirdLabel,
-            fourthLabel: this.fourthLabel,
-            startScale: this.startScale,
-            endScale: this.endScale,
             xmin: this.xmin,
             ymin: this.ymin,
             xmax: this.xmax,
@@ -385,7 +365,7 @@ export default class Box {
         } else {
             ctx.font = "12px Arial";
         }
-        const showText = this.name + '[' + this.label + ']' + this.secondLabel + '[' + this.thirdLabel + ']' + this.fourthLabel + '[' + this.startScale + ']' + '[' + this.endScale + ']';
+        const showText = this.name + '[' + this.label + ']';
         const labelWidth = ctx.measureText(showText).width + 10;
         const labelHeight = 20;
         let labelX = this.xmin;

@@ -12,24 +12,6 @@
     export let label = [];
     export let currentLabel = [];
     export let choices = [];  // [(label, i)]
-
-    export let secondLabel = "";
-    export let currentSecondLabel = '';
-    export let secondChoices = [];  // [(label, i)]
-
-    export let thirdLabel = [];
-    export let currentThirdLabel = [];
-    export let thirdChoices = [];  // [(label, i)]
-
-    export let fourthLabel = [];
-    export let currentFourthLabel = [];
-    export let fourthChoices = [];  // [(label, i)]
-
-    export let startScale = "1.0";
-    export let currentStartScale = "1.0";
-
-    export let endScale = "1.0";
-    export let currentEndScale = "1.0";
     
     export let choicesColors = [];
     export let color = "";
@@ -43,13 +25,8 @@
     function dispatchChange(ret: number) {
         dispatch("change", {
             label: currentLabel,
-            secondLabel: currentSecondLabel,
-            thirdLabel: currentThirdLabel,
-            fourthLabel: currentFourthLabel,
             color: currentColor,
             name: currentName,
-            startScale: currentStartScale,
-            endScale: currentEndScale,
             ret: ret // -1: remove, 0: cancel, 1: change
         });
     }
@@ -88,45 +65,6 @@
         }
     }
 
-    function onSecondDropDownChange(event) {
-        const { detail } = event;
-		let choice = detail;
-
-        if (Number.isInteger(choice)) {
-            if (Array.isArray(secondChoices) && choice < secondChoices.length) {
-                currentSecondLabel = secondChoices[choice][0];
-            }
-        } else {
-            currentSecondLabel = choice;
-        }
-    }
-
-    function onThirdDropDownChange(event) {
-        const { detail } = event;
-		let choice = detail;
-        
-        if (Number.isInteger(choice)) {
-            if (Array.isArray(thirdChoices) && choice < thirdChoices.length) {
-                currentThirdLabel = thirdChoices[choice][0];
-            }
-        } else {
-            currentThirdLabel = choice;
-        }
-    }
-
-    function onFourthDropDownChange(event) {
-        const { detail } = event;
-		let choice = detail;
-        
-        if (Number.isInteger(choice)) {
-            if (Array.isArray(fourthChoices) && choice < fourthChoices.length) {
-                currentFourthLabel = fourthChoices[choice][0];
-            }
-        } else {
-            currentFourthLabel = choice;
-        }
-    }
-
     function onColorChange(event) {
         const { detail } = event;
 		currentColor = detail;
@@ -134,21 +72,6 @@
 
     function onDropDownEnter(event) {
         onDropDownChange(event);
-        dispatchChange(1);
-    }
-
-    function onSecondDropDownEnter(event) {
-        onSecondDropDownChange(event);
-        dispatchChange(1);
-    }
-
-    function onThirdDropDownEnter(event) {
-        onThirdDropDownChange(event);
-        dispatchChange(1);
-    }
-
-    function onFourthDropDownEnter(event) {
-        onFourthDropDownChange(event);
         dispatchChange(1);
     }
 
@@ -163,13 +86,8 @@
 	onMount(() => {
 		document.addEventListener("keydown", handleKeyPress);
         currentLabel = label;
-        currentSecondLabel = secondLabel;
-        currentThirdLabel = thirdLabel;
-        currentFourthLabel = fourthLabel;
         currentName = name;
         currentColor = color;
-        currentStartScale = startScale;
-        currentEndScale = endScale;
 	});
     
 	onDestroy(() => {
@@ -184,45 +102,12 @@
             <div style="margin-right: 10px; margin-top: 10px;">
                 <BaseMultiselect
                     value={currentLabel}
-                    label="Content Label(内容标签)"
+                    label="Label"
                     {choices}
                     show_label={true}
                     allow_custom_value={false}
                     on:change={onDropDownChange}
                     on:enter={onDropDownEnter}
-                />
-            </div>
-            <div style="margin-right: 10px; margin-top: 10px;">
-                <BaseDropdown
-                    value={currentSecondLabel}
-                    label="Layout Label(层级标签)"
-                    choices={secondChoices}
-                    show_label={true}
-                    allow_custom_value={false}
-                    on:change={onSecondDropDownChange}
-                    on:enter={onSecondDropDownEnter}
-                />
-            </div>
-            <div style="margin-right: 10px; margin-top: 10px;">
-                <BaseMultiselect
-                    value={currentThirdLabel}
-                    label="Lens Label(镜头标签)"
-                    choices={thirdChoices}
-                    show_label={true}
-                    allow_custom_value={false}
-                    on:change={onThirdDropDownChange}
-                    on:enter={onThirdDropDownEnter}
-                />
-            </div>
-            <div style="margin-right: 10px; margin-top: 10px;">
-                <BaseMultiselect
-                    value={currentFourthLabel}
-                    label="Function Label(功能标签)"
-                    choices={fourthChoices}
-                    show_label={true}
-                    allow_custom_value={false}
-                    on:change={onFourthDropDownChange}
-                    on:enter={onFourthDropDownEnter}
                 />
             </div>
             <div style="margin-right: 10px;">
@@ -231,22 +116,6 @@
                     label="Name"
                     show_label={true}
                     on:change={onTextboxChange}
-                />
-            </div>
-            <div style="margin-right: 10px;">
-                <BaseTextbox
-                    value={startScale}
-                    label="Start Scale"
-                    show_label={true}
-                    on:change={onStartScaleChange}
-                />
-            </div>
-            <div style="margin-right: 10px;">
-                <BaseTextbox
-                    value={endScale}
-                    label="End Scale"
-                    show_label={true}
-                    on:change={onEndScaleChange}
                 />
             </div>
             <div style="margin-right: 40px; margin-bottom: 8px; margin-top: 10px;">

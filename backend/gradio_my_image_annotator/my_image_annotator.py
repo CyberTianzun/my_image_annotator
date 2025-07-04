@@ -12,6 +12,7 @@ from PIL import ImageOps
 from gradio_client import handle_file
 from gradio_client.documentation import document
 
+import uuid
 import re
 import warnings
 from pathlib import Path
@@ -61,9 +62,6 @@ class my_image_annotator(Component):
         *,
         boxes_alpha: float | None = None,
         label_list: list[str] | None = None,
-        second_label_list: list[str] | None = None,
-        third_label_list: list[str] | None = None,
-        fourth_label_list: list[str] | None = None,
         label_colors: list[str] | None = None,
         box_min_size: int | None = None,
         handle_size: int | None = None,
@@ -176,18 +174,6 @@ class my_image_annotator(Component):
             self.label_list = [(l, i) for i, l in enumerate(label_list)]
         else:
             self.label_list = None
-        if second_label_list:
-            self.second_label_list = [(l, i) for i, l in enumerate(second_label_list)]
-        else:
-            self.second_label_list = None
-        if third_label_list:
-            self.third_label_list = [(l, i) for i, l in enumerate(third_label_list)]
-        else:
-            self.third_label_list = None
-        if fourth_label_list:
-            self.fourth_label_list = [(l, i) for i, l in enumerate(fourth_label_list)]
-        else:
-            self.fourth_label_list = None
         
         # Parse colors
         self.label_colors = label_colors
@@ -261,14 +247,10 @@ class my_image_annotator(Component):
         parsed_boxes = []
         for box in boxes:
             new_box = {}
+            new_box["key"] = box.get("key", uuid.uuid4().hex)
             new_box["isLine"] = box.get("isLine", False)
             new_box["name"] = box.get("name", "")
             new_box["label"] = box.get("label", [])
-            new_box["startScale"] = box.get("startScale", "1.0")
-            new_box["endScale"] = box.get("endScale", "1.0")
-            new_box["secondLabel"] = box.get("secondLabel", "")
-            new_box["thirdLabel"] = box.get("thirdLabel", "")
-            new_box["fourthLabel"] = box.get("fourthLabel", "")
             new_box["color"] = (0,0,0)
             if "color" in box:
                 match = re.match(r'rgb\((\d+), (\d+), (\d+)\)', box["color"])
@@ -371,9 +353,6 @@ class my_image_annotator(Component):
                     "xmax": 530,
                     "ymax": 500,
                     "label": ["Gradio"],
-                    "secondLabel": "Test",
-                    "thirdLabel": "Apple",
-                    "fourthLabel": "Dog",
                     "color": (250,185,0),
                 }
             ]

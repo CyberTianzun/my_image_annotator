@@ -18,11 +18,7 @@
 	export let boxSelectedThickness: number;
 	export let value: null | AnnotatedImageData;
 	export let choices = [];
-	export let secondChoices = [];
-    export let choicesColors = [];
-
-	export let thirdChoices = [];
-	export let fourthChoices = [];
+	export let choicesColors = [];
 
 	export let disableEditBoxes: boolean = false;
 	export let height: number | string = "100%";
@@ -218,13 +214,9 @@
 			canvasXmax,
 			canvasYmax,
 			isLine,
+			crypto.randomUUID().replaceAll('-', ''),
 			"",
 			[],
-			"",
-			[],
-			[],
-			"1.0",
-			"1.0",
 			x,
 			y,
 			x,
@@ -297,22 +289,12 @@
 		const { detail } = event;
 		let name = detail.name;
 		let label = detail.label;
-		let secondLabel = detail.secondLabel;
-		let thirdLabel = detail.thirdLabel;
-		let fourthLabel = detail.fourthLabel;
-		let startScale = detail.startScale;
-		let endScale = detail.endScale;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
 			let box = value.boxes[selectedBox];
 			if (ret == 1) {
 				box.label = label;
-				box.secondLabel = secondLabel;
-				box.thirdLabel = thirdLabel;
-				box.fourthLabel = fourthLabel;
-				box.startScale = startScale;
-				box.endScale = endScale;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -328,22 +310,12 @@
 		const { detail } = event;
 		let name = detail.name;
 		let label = detail.label;
-		let secondLabel = detail.secondLabel;
-		let thirdLabel = detail.thirdLabel;
-		let fourthLabel = detail.fourthLabel;
-		let startScale = detail.startScale;
-		let endScale = detail.endScale;
 		let color = detail.color;
 		let ret = detail.ret;
 		if (selectedBox >= 0 && selectedBox < value.boxes.length) {
 			let box = value.boxes[selectedBox];
 			if (ret == 1) {
 				box.label = label;
-				box.secondLabel = secondLabel;
-				box.thirdLabel = thirdLabel;
-				box.fourthLabel = fourthLabel;
-				box.startScale = startScale;
-				box.endScale = endScale;
 				box.name = name;
 				box.color = colorHexToRGB(color);
 				draw();
@@ -417,11 +389,7 @@
 			if (!(box instanceof Box)) {
 				let color = "";
 				let label = [];
-				let secondLabel = "";
-				let thirdLabel = [];
-				let fourthLabel = [];
-				let startScale = "1.0";
-				let endScale = "1.0";
+				let key = "";
 				let name = "";
 				if (box.hasOwnProperty("color")) {
 					color = box["color"];
@@ -434,23 +402,11 @@
 				if (box.hasOwnProperty("label")) {
 					label = box["label"];
 				}
-				if (box.hasOwnProperty("secondLabel")) {
-					secondLabel = box["secondLabel"];
-				}
-				if (box.hasOwnProperty("thirdLabel")) {
-					thirdLabel = box["thirdLabel"];
-				}
-				if (box.hasOwnProperty("fourthLabel")) {
-					fourthLabel = box["fourthLabel"];
+				if (box.hasOwnProperty("key")) {
+					key = box["key"];
 				}
 				if (box.hasOwnProperty("name")) {
 					name = box["name"];
-				}
-				if (box.hasOwnProperty("startScale")) {
-					startScale = box["startScale"];
-				}
-				if (box.hasOwnProperty("endScale")) {
-					endScale = box["endScale"];
 				}
 				const isLine = box['isLine'] || false;
 				let pathPoints = [];
@@ -466,13 +422,9 @@
 					canvasXmax,
 					canvasYmax,
 					isLine,
+					key,
 					name,
 					label,
-					secondLabel,
-					thirdLabel,
-					fourthLabel,
-					box["startScale"],
-					box["endScale"],
 					box["xmin"],
 					box["ymin"],
 					box["xmax"],
@@ -598,18 +550,10 @@
 		on:change={onModalEditChange}
 		on:enter{onModalEditChange}
 		choices={choices}
-		secondChoices={secondChoices}
-		thirdChoices={thirdChoices}
-		fourthChoices={fourthChoices}
 		choicesColors={choicesColors}
 		name={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].name : ""}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
-		secondLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].secondLabel : ""}
-		thirdLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].thirdLabel : ""}
-		fourthLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].fourthLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
-		startScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].startScale : ""}
-		endScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].endScale : ""}
 	/>
 {/if}
 
@@ -618,18 +562,10 @@
 		on:change={onModalNewChange}
 		on:enter{onModalNewChange}
 		choices={choices}
-		secondChoices={secondChoices}
-		thirdChoices={thirdChoices}
-		fourthChoices={fourthChoices}
 		showRemove={false}
 		choicesColors={choicesColors}
 		label={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].label : ""}
-		secondLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].secondLabel : ""}
-		thirdLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].thirdLabel : ""}
-		fourthLabel={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].fourthLabel : ""}
 		color={selectedBox >= 0 && selectedBox < value.boxes.length ? colorRGBAToHex(value.boxes[selectedBox].color) : ""}
-		startScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].startScale : ""}
-		endScale={selectedBox >= 0 && selectedBox < value.boxes.length ? value.boxes[selectedBox].endScale : ""}
 	/>
 {/if}
 
