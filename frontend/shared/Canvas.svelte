@@ -151,6 +151,11 @@
 
 	function handlePointerUp(event: PointerEvent) {
 		dispatch("change");
+		if (mode === Mode.creation) {
+			selectBox(0);
+		} else if (mode === Mode.creationLine) {
+			selectBox(0);
+		}
 	}
 
 	function handlePointerMove(event: PointerEvent) {
@@ -235,7 +240,7 @@
 		} else {
 			value.boxes = [box, ...value.boxes];
 		}
-		selectBox(0);
+		// selectBox(0);
 		draw();
 		dispatch("change");
 	}
